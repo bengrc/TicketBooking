@@ -6,7 +6,7 @@ let express = require('express'),
   dataBaseConfig = require('./database/db');
 
 // Routes
-const transactionRoute = require('../Payment/routes/transaction.route');
+const transactionRoute = require('.//routes/transaction.route');
 
 // Connecting mongoDB
 mongoose.Promise = global.Promise;
