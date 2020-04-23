@@ -1,16 +1,18 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
-WORKDIR /app
+FROM node:10
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
+WORKDIR /app/payment
 
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json /app
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
-WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "TicketOrder.dll"]
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=productio
+
+# Bundle app source
+COPY ./ /app/payment
+
+EXPOSE 4000
+RUN npm start
