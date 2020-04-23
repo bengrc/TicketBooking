@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Define collection and schema
-let Student = new Schema(
+let Transaction = new Schema(
   {
     student_name: {
       type: String
@@ -24,8 +24,8 @@ let Student = new Schema(
     }
   },
   {
-    collection: 'students'
+    collection: 'transactions'
   }
 );
 
-module.exports = mongoose.model('Student', Student);
+module.exports = mongoose.model('Transaction', Transaction);

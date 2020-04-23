@@ -1,73 +1,72 @@
 const express = require('express');
 const app = express();
-const studentRoute = express.Router();
+const transactionRoute = express.Router();
 
-// Student model
-let Student = require('../models/transaction');
+// Transaction model
+let Transaction = require('../models/transaction');
 
-// Add Student
-studentRoute.route('/add-student').post((req, res, next) => {
-  Student.create(req.body, (error, data) => {
-    if (error) {
-      return next(error);
-    } else {
-      res.json(data);
-      console.log('Student successfully added!');
-    }
-  });
+// Add Transaction
+transactionRoute.route('/add-student').post((req, res, next) => {
+    Transaction.create(req.body, (error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            res.json(data);
+            console.log('Transaction successfully added!');
+        }
+    });
 });
 
-// Get all student
-studentRoute.route('/').get((req, res) => {
-  Student.find((error, data) => {
-    if (error) {
-      return next(error);
-    } else {
-      res.json(data);
-    }
-  });
+// Get all transactions
+transactionRoute.route('/').get((req, res) => {
+    Transaction.find((error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            res.json(data);
+        }
+    });
 });
 
 // Get single student
-studentRoute.route('/read-student/:id').get((req, res) => {
-  Student.findById(req.params.id, (error, data) => {
-    if (error) {
-      return next(error);
-    } else {
-      res.json(data);
-    }
-  });
+transactionRoute.route('/read-student/:id').get((req, res) => {
+    Transaction.findById(req.params.id, (error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            res.json(data);
+        }
+    });
 });
 
 // Update student
-studentRoute.route('/update-student/:id').put((req, res, next) => {
-  Student.findByIdAndUpdate(
-    req.params.id,
+transactionRoute.route('/update-student/:id').put((req, res, next) => {
+    Transaction.findByIdAndUpdate(req.params.id,
     {
       $set: req.body
     },
     (error, data) => {
-      if (error) {
-        return next(error);
-      } else {
-        res.json(data);
-        console.log('Student successfully updated!');
-      }
+        if (error) {
+            return next(error);
+        } else {
+            res.json(data);
+            console.log('Transaction successfully updated!');
+        }
     }
   );
 });
 
-// Delete student
-studentRoute.route('/delete-student/:id').delete((req, res, next) => {
-  Student.findByIdAndRemove(req.params.id, (error, data) => {
+// Delete Transaction
+transactionRoute.route('/delete-student/:id').delete((req, res, next) => {
+    Transaction.findByIdAndRemove(req.params.id, (error, data) => {
     if (error) {
-      return next(error);
+        return next(error);
     } else {
-      res.status(200).json({
+        res.status(200).json({
         msg: data
-      });
+        });
     }
   });
 });
 
-module.exports = studentRoute;
+module.exports = transactionRoute;
