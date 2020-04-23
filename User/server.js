@@ -1,12 +1,9 @@
-let express = require('express'),
-  path = require('path'),
-  mongoose = require('mongoose'),
-  cors = require('cors'),
-  bodyParser = require('body-parser'),
-  dataBaseConfig = require('./database/db');
-
-// Routes
-const transactionRoute = require('.//routes/transaction.route');
+const express = require('express');
+const path = require('path');
+const mongoose = require('mongoose')
+const cors = require('cors');
+const bodyParser = require('body-parser')
+const dataBaseConfig = require('./server/database/db');
 
 // Connecting mongoDB
 mongoose.Promise = global.Promise;
@@ -17,7 +14,7 @@ mongoose
   })
   .then(
     () => {
-      console.log('Database connected successfully');
+      console.log('Database connected successfully ');
     },
     error => {
       console.log('Could not connected to database : ' + error);
@@ -25,6 +22,7 @@ mongoose
   );
 
 // Set up express js port
+const userRoute = require('./server/routes/user.route');
 const app = express();
 app.use(bodyParser.json());
 app.use(
@@ -33,16 +31,15 @@ app.use(
   })
 );
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'dist/Payment')));
-app.use('/', express.static(path.join(__dirname, 'dist/Payment')));
-app.use('/', transactionRoute);
+/* app.use(express.static(path.join(dirname, 'dist/user-service')));
+app.use('/', express.static(path.join(dirname, 'dist/user-service'))); */
+app.use('/', userRoute);
 
 // Create port
 const port = process.env.PORT || 4000;
 const server = app.listen(port, () => {
   console.log('Server is listening to port ' + port);
 });
-
 
 // Find 404 and hand over to error handler
 app.use((req, res, next) => {

@@ -1,0 +1,49 @@
+version: '3.5'
+
+services:
+    ticket_order_service:
+        image: mcr.microsoft.com/dotnet/core/sdk:3.1
+        container_name: ticker_order_service
+        volumes: 
+            - ./TicketOrder/:/usr/src/app/ticketOrder
+        working_dir: /usr/src/app/ticketOrder
+        ports: 
+            -   64984:64984
+        restart: always
+        command: dotnet run
+    payment_service:
+        image: node:10
+        container_name: payment_service
+        volumes:
+            - ./Payment/:/usr/src/app/payment
+        working_dir: /usr/src/app/payment
+        ports:
+            - 4000:4000
+        links:
+            - payment_service_db
+        restart: always
+        command: npm start
+    payment_service_db:
+        image: bitnami/mongodb:4.0
+        container_name: db
+        labels:
+          kompose.service.type: nodeport
+        ports:
+          - 27017:27017
+        volumes:
+          - ./www/build/bdd/mongod.conf:/opt/bitnami/mongodb/conf
+          - ./www/build/api/data/:/bitnami/mongodb/data
+        restart: always
+        command: mongod --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
+    user_service_db:
+        image: bitnami/mongodb:4.0
+        container_name: db2
+        labels:
+          kompose.service.type: nodeport
+        ports:
+          - 27018:27017
+        volumes:
+          - ./www/build/bdd/mongod.conf:/opt/bitnami/mongodb/conf
+          - ./www/build/api/data/:/bitnami/mongodb/data
+        restart: always
+        command: mongod --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
