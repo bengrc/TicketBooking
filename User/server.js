@@ -5,6 +5,23 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 const dataBaseConfig = require('./server/database/db');
 
+// configuring swagger doc
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'User Service API',
+      description: 'User MicroService API Documentation',
+      server: ['http://localhost:3000'],
+    }
+  },
+  apis: ['server.js', './server/routes/user.route.js'],
+}
+
+
 // Connecting mongoDB
 mongoose.Promise = global.Promise;
 mongoose
@@ -34,7 +51,8 @@ app.use(cors());
 /* app.use(express.static(path.join(dirname, 'dist/user-service')));
 app.use('/', express.static(path.join(dirname, 'dist/user-service'))); */
 app.use('/', userRoute);
-
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-documentation', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Create port
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
