@@ -13,9 +13,9 @@ namespace TicketOrder.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly OrderContext _context;
+        private readonly TicketOrderContext _context;
 
-        public OrdersController(OrderContext context)
+        public OrdersController(TicketOrderContext context)
         {
             _context = context;
         }
@@ -82,7 +82,7 @@ namespace TicketOrder.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
 
         // DELETE: Orders/5
@@ -96,6 +96,51 @@ namespace TicketOrder.Controllers
             }
 
             _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return order;
+        }
+
+        // PUT: Orders/removeTicket/orderId,ticketToRemoveId
+        [HttpPut("{orderid,tickettoremoveid}")]
+        [Route("removeTicket")]
+        public async Task<ActionResult<Order>> RemoveTicket(long orderId,long ticketToRemoveId)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            if (order.TicketsBooked.Any(e => e.Id == ticketToRemoveId))
+            {
+                int i = 0;
+                while (i < order.TicketsBooked.Count)
+                {
+                    if (order.TicketsBooked.ElementAt(i).Id == ticketToRemoveId)
+                    {
+                        break;
+                    }
+                    i++;
+                }
+                order.TicketsBooked.RemoveAt(i);
+            }
+            await _context.SaveChangesAsync();
+
+            return order;
+        }
+
+        // PUT: Orders/changeStatus/id, paiement
+        [HttpPut("{id,paiement}")]
+        [Route("changeStatus")]
+        public async Task<ActionResult<Order>> ChangeStatus(long id, bool paiement)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            order.Payment = paiement;
+
             await _context.SaveChangesAsync();
 
             return order;

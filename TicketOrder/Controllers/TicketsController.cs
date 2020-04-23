@@ -11,25 +11,25 @@ namespace TicketOrder.Controllers
     [ApiController]
     public class TicketsController : ControllerBase
     {
-        private readonly TicketContext ticketContext;
+        private readonly TicketOrderContext ticketOrderContext;
 
-        public TicketsController(TicketContext context)
+        public TicketsController(TicketOrderContext context)
         {
-            ticketContext = context;
+            ticketOrderContext = context;
         }
 
         // GET: Tickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
         {
-            return await ticketContext.Tickets.ToListAsync();
+            return await ticketOrderContext.Tickets.ToListAsync();
         }
 
         // GET: Tickets/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(long id)
         {
-            var ticket = await ticketContext.Tickets.FindAsync(id);
+            var ticket = await ticketOrderContext.Tickets.FindAsync(id);
 
             if (ticket == null)
             {
@@ -50,11 +50,11 @@ namespace TicketOrder.Controllers
                 return BadRequest();
             }
 
-            ticketContext.Entry(ticket).State = EntityState.Modified;
+            ticketOrderContext.Entry(ticket).State = EntityState.Modified;
 
             try
             {
-                await ticketContext.SaveChangesAsync();
+                await ticketOrderContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -77,8 +77,8 @@ namespace TicketOrder.Controllers
         [HttpPost]
         public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
         {
-            ticketContext.Tickets.Add(ticket);
-            await ticketContext.SaveChangesAsync();
+            ticketOrderContext.Tickets.Add(ticket);
+            await ticketOrderContext.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
         }
@@ -87,22 +87,49 @@ namespace TicketOrder.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Ticket>> DeleteTicket(long id)
         {
-            var ticket = await ticketContext.Tickets.FindAsync(id);
+            var ticket = await ticketOrderContext.Tickets.FindAsync(id);
             if (ticket == null)
             {
                 return NotFound();
             }
 
-            ticketContext.Tickets.Remove(ticket);
-            await ticketContext.SaveChangesAsync();
+            ticketOrderContext.Tickets.Remove(ticket);
+            await ticketOrderContext.SaveChangesAsync();
 
             return ticket;
         }
 
+        // POST: Tickets/book/5,1
+        [Route("book")]
+        [HttpPost("{id}")]
+        public async Task<ActionResult<Ticket>> PostOrder(long id, long userId)
+        {
+            Ticket ticket = null;
+            if (TicketExists(id)) {
+                ticket = await ticketOrderContext.Tickets.FindAsync(id);
+                ticket.Available = false;
+            }
+
+            Order order = new Order();
+            if (ticketOrderContext.Orders != null && ticketOrderContext.Orders.Any(e => e.UserId == userId))
+            {
+                order = ticketOrderContext.Orders.ToList().Find(e => e.UserId == userId);
+            }
+            else
+            {
+                order.UserId = userId;
+                order.TicketsBooked = new List<Ticket>();
+                ticketOrderContext.Orders.Add(order);
+            }
+            order.TicketsBooked.Add(ticket);
+            await ticketOrderContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetTickets), order);
+        }
 
         private bool TicketExists(long id)
         {
-            return ticketContext.Tickets.Any(e => e.Id == id);
+            return ticketOrderContext.Tickets.Any(e => e.Id == id);
         }
     }
 }
