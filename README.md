@@ -1,6 +1,7 @@
 # TicketBooking
 For run this project, type :
-npm install && npm start at the project root
+# npm install && npm start 
+at the project root
 
 Made with love for the Service based software architect class :)
 
