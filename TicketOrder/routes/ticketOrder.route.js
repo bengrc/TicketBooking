@@ -1,10 +1,69 @@
 const express = require('express');
 const app = express();
 const ticketOrderRoute = express.Router();
-
+var ObjectId = require('mongodb').ObjectID;
 // Ticket model
 let Ticket = require('../models/ticket');
 let Order = require('../models/order')
+let OrderModel = require('../models/order');
+
+
+ticketOrderRoute.route('/ticket/book').post((req, res, next) => {
+    Order.find({'userId': req.body.userId }, function (err, order) {
+        if (order.length > 0) {
+            Ticket.findById(req.body.ticketId, (error, ticket) => {
+                if (error) {
+                    return next(error);
+                } else {
+                    console.log("Update order");
+                    Order.findByIdAndUpdate(order[0].id,
+                        {
+                          $addToSet: { "ticketsBooked": ticket }
+                        },
+                        (error, data) => {
+                            if (error) {
+                                return next(error);
+                            } else {
+                                res.json(data);
+                                console.log('Order successfully updated!');
+                            }
+                        }
+                      );
+                }
+            });   
+        } else {
+            Order.create({"userId": req.body.userId, "ticketsBooked": [], "payment": false}, (error, data) => {
+                if (error) {
+                    return next(error);
+                } else {
+                    console.log('Order successfully added!');
+                    console.log(data.id)
+                    Ticket.findById(req.body.ticketId, (error, ticket) => {
+                        if (error) {
+                            return next(error);
+                        } else {
+                            console.log("Update order");
+                            Order.findByIdAndUpdate(data.id,
+                                {
+                                  $addToSet: { "ticketsBooked": ticket }
+                                },
+                                (error, data) => {
+                                    if (error) {
+                                        return next(error);
+                                    } else {
+                                        res.json(data);
+                                        console.log('Order successfully updated!');
+                                    }
+                                }
+                              );
+                        }
+                    });   
+                    
+                }
+            });           
+        }
+    });
+})
 
 
 /* Ticket Requests */

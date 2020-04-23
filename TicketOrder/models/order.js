@@ -29,4 +29,16 @@ let Order = new Schema(
   }
 );
 
+
 module.exports = mongoose.model('Order', Order);
+
+class OrderModel {
+    constructor(userId, ticketsBooked, payment, _id) {
+    this._id = _id
+      this.userId = userId;
+      this.ticketsBooked = ticketsBooked;
+      this.payment = payment;
+    }
+}
+
+module.exports.OrderModel = OrderModel;
