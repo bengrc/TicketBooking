@@ -36,7 +36,7 @@ app.use('/', express.static(path.join(dirname, 'dist/user-service'))); */
 app.use('/', userRoute);
 
 // Create port
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log('Server is listening to port ' + port);
 });

@@ -1,4 +1,4 @@
 module.exports = {
-  db: 'mongodb://localhost:27017/Users'
+  db: 'mongodb://db2:27018/TicketBooking'
 /*   db: 'mongodb://mongo:27017/Users' */
 };
