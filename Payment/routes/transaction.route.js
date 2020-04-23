@@ -6,7 +6,7 @@ const transactionRoute = express.Router();
 let Transaction = require('../models/transaction');
 
 // Add Transaction
-transactionRoute.route('/add-student').post((req, res, next) => {
+transactionRoute.route('/transaction/create').post((req, res, next) => {
     Transaction.create(req.body, (error, data) => {
         if (error) {
             return next(error);
@@ -18,7 +18,7 @@ transactionRoute.route('/add-student').post((req, res, next) => {
 });
 
 // Get all transactions
-transactionRoute.route('/').get((req, res) => {
+transactionRoute.route('/transactions').get((req, res) => {
     Transaction.find((error, data) => {
         if (error) {
             return next(error);
@@ -28,8 +28,8 @@ transactionRoute.route('/').get((req, res) => {
     });
 });
 
-// Get single student
-transactionRoute.route('/read-student/:id').get((req, res) => {
+// Get single transaction
+transactionRoute.route('/transaction/:id').get((req, res) => {
     Transaction.findById(req.params.id, (error, data) => {
         if (error) {
             return next(error);
@@ -39,8 +39,8 @@ transactionRoute.route('/read-student/:id').get((req, res) => {
     });
 });
 
-// Update student
-transactionRoute.route('/update-student/:id').put((req, res, next) => {
+// Update transaction
+transactionRoute.route('/transaction/:id').put((req, res, next) => {
     Transaction.findByIdAndUpdate(req.params.id,
     {
       $set: req.body
@@ -57,7 +57,7 @@ transactionRoute.route('/update-student/:id').put((req, res, next) => {
 });
 
 // Delete Transaction
-transactionRoute.route('/delete-student/:id').delete((req, res, next) => {
+transactionRoute.route('/transaction/delete/:id').delete((req, res, next) => {
     Transaction.findByIdAndRemove(req.params.id, (error, data) => {
     if (error) {
         return next(error);
