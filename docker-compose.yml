@@ -1,18 +1,6 @@
 version: '3.5'
 
 services:
-    user_service_db:
-        image: bitnami/mongodb:4.0
-        container_name: db2
-        labels:
-          kompose.service.type: nodeport
-        ports:
-          - 27018:27018
-        volumes:
-          - ./www/build/bdd/mongod.conf:/opt/bitnami/mongodb/conf
-          - ./www/build/api/data/:/bitnami/mongodb/data
-        restart: always
-        command: mongod --port 27018 --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
     payment_service_db:
         image: bitnami/mongodb:4.0
         container_name: db
@@ -25,6 +13,18 @@ services:
           - ./www/build/api/data/:/bitnami/mongodb/data
         restart: always
         command: mongod --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
+    user_service_db:
+        image: bitnami/mongodb:4.0
+        container_name: db2
+        labels:
+          kompose.service.type: nodeport
+        ports:
+          - 27018:27018
+        volumes:
+          - ./www/build/bdd/mongod.conf:/opt/bitnami/mongodb/conf
+          - ./www/build/api/data/:/bitnami/mongodb/data
+        restart: always
+        command: mongod --port 27018 --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
     ticket_order_service_db:
         image: bitnami/mongodb:4.0
         container_name: db3
@@ -48,7 +48,7 @@ services:
         links:
             - user_service_db
         restart: always
-        command: npm install npm start
+        command: npm start
     ticket_order_service:
         image: node:10
         container_name: ticker_order_service
@@ -60,7 +60,7 @@ services:
         links:
             - ticket_order_service_db
         restart: always
-        command: npm install npm start
+        command: npm start
     payment_service:
         image: node:10
         container_name: payment_service
@@ -72,6 +72,6 @@ services:
         links:
             - payment_service_db
         restart: always
-        command: npm install npm start
+        command: npm start
     
  
