@@ -1,0 +1,21 @@
+{
+  "name": "ticketbooking",
+  "version": "1.0.0",
+  "description": "For run this project, type  docker-compose up",
+  "main": "index.js",
+  "scripts": {
+    "start": "docker-compose up",
+    "install": "cd ./Payment && npm install && cd .././TicketOrder && npm install && cd .././User && npm install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bengrc/TicketBooking.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bengrc/TicketBooking/issues"
+  },
+  "homepage": "https://github.com/bengrc/TicketBooking#readme"
+}
