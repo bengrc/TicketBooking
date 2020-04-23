@@ -35,3 +35,15 @@ services:
           - ./www/build/api/data/:/bitnami/mongodb/data
         restart: always
         command: mongod --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
+    user_service_db:
+        image: bitnami/mongodb:4.0
+        container_name: db2
+        labels:
+          kompose.service.type: nodeport
+        ports:
+          - 27018:27017
+        volumes:
+          - ./www/build/bdd/mongod.conf:/opt/bitnami/mongodb/conf
+          - ./www/build/api/data/:/bitnami/mongodb/data
+        restart: always
+        command: mongod --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
