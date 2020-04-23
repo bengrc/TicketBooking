@@ -1,3 +1,3 @@
 # TicketBooking
-For run this project, type 
-docker-compose up
+For run this project, type :
+npm install && npm start at the project root
