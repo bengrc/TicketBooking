@@ -7,6 +7,42 @@ let Ticket = require('../models/ticket');
 let Order = require('../models/order')
 let OrderModel = require('../models/order');
 
+ticketOrderRoute.route('/order/removeTicket').post((req, res, next) => {
+    Ticket.findById(req.body.ticketId, (error, ticket) => {
+        if (error) {
+            return next(error);
+        } else {
+            console.log(ticket)
+            Order.findByIdAndUpdate(req.body.orderId,
+                {
+                  $unset: { "ticketsBooked": ticket }
+                },
+                (error, data) => {
+                    if (error) {
+                        return next(error);
+                    } else {
+                        res.json(data);
+                        if (data.ticketsBooked.length == 0) {
+                            Order.findByIdAndRemove(req.body.orderId, (error, data) => {
+                                if (error) {
+                                    return next(error);
+                                } else {
+                                    res.status(200).json({
+                                    msg: data
+                                    });
+                                }
+                            });
+                            
+                        }
+                        console.log('Order successfully updated!');
+                    }
+                }
+            ); 
+        }
+    }); 
+   
+})
+
 
 ticketOrderRoute.route('/ticket/book').post((req, res, next) => {
     Order.find({'userId': req.body.userId }, function (err, order) {

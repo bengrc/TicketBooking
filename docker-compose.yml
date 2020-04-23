@@ -13,40 +13,6 @@ services:
           - ./www/build/api/data/:/bitnami/mongodb/data
         restart: always
         command: mongod --port 27018 --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
-    user_service:
-        image: node:10
-        container_name: user_service
-        volumes:
-            - ./User/:/usr/src/app/user
-        working_dir: /usr/src/app/user
-        ports:
-            - 3000:3000
-        links:
-            - user_service_db
-        restart: always
-        command: npm start
-    ticket_order_service:
-        image: mcr.microsoft.com/dotnet/core/sdk:3.1
-        container_name: ticker_order_service
-        volumes: 
-            - ./TicketOrder/:/usr/src/app/ticketOrder
-        working_dir: /usr/src/app/ticketOrder
-        ports: 
-            -   64984:64984
-        restart: always
-        command: dotnet run
-    payment_service:
-        image: node:10
-        container_name: payment_service
-        volumes:
-            - ./Payment/:/usr/src/app/payment
-        working_dir: /usr/src/app/payment
-        ports:
-            - 4000:4000
-        links:
-            - payment_service_db
-        restart: always
-        command: npm start
     payment_service_db:
         image: bitnami/mongodb:4.0
         container_name: db
@@ -59,4 +25,53 @@ services:
           - ./www/build/api/data/:/bitnami/mongodb/data
         restart: always
         command: mongod --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
+    ticket_order_service_db:
+        image: bitnami/mongodb:4.0
+        container_name: db3
+        labels:
+          kompose.service.type: nodeport
+        ports:
+          - 27019:27019
+        volumes:
+          - ./www/build/bdd/mongod.conf:/opt/bitnami/mongodb/conf
+          - ./www/build/api/data/:/bitnami/mongodb/data
+        restart: always
+        command: mongod --port 27019 --dbpath /bitnami/mongodb/ --bind_ip 0.0.0.0
+    user_service:
+        image: node:10
+        container_name: user_service
+        volumes:
+            - ./User/:/usr/src/app/user
+        working_dir: /usr/src/app/user
+        ports:
+            - 3000:3000
+        links:
+            - user_service_db
+        restart: always
+        command: npm install npm start
+    ticket_order_service:
+        image: node:10
+        container_name: ticker_order_service
+        volumes:
+            - ./TicketOrder/:/usr/src/app/ticket_order
+        working_dir: /usr/src/app/ticket_order
+        ports:
+            - 2000:2000
+        links:
+            - ticket_order_service_db
+        restart: always
+        command: npm install npm start
+    payment_service:
+        image: node:10
+        container_name: payment_service
+        volumes:
+            - ./Payment/:/usr/src/app/payment
+        working_dir: /usr/src/app/payment
+        ports:
+            - 4000:4000
+        links:
+            - payment_service_db
+        restart: always
+        command: npm install npm start
+    
  
