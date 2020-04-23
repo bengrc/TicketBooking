@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TicketOrder.Models
 {
@@ -6,7 +7,7 @@ namespace TicketOrder.Models
     {
         public long Id { get; set; }
         public long UserId { get; set; }
-        public Ticket[] TicketsBooked { get; set; }
+        public List<Ticket> TicketsBooked { get; set; }
         public bool Payment { get; set; }
     }
 }
